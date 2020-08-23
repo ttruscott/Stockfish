@@ -569,6 +569,7 @@ namespace {
     constexpr bool PvNode = NT == PV;
     const bool rootNode = PvNode && ss->ply == 0;
 
+#if 0
     // Check if we have an upcoming move which draws by repetition, or
     // if the opponent had an alternative move earlier to this position.
     if (   pos.rule50_count() >= 3
@@ -580,6 +581,7 @@ namespace {
         if (alpha >= beta)
             return alpha;
     }
+#endif
 
     // Dive into quiescence search when the depth reaches zero
     if (depth <= 0)
