@@ -531,9 +531,9 @@ namespace {
         && alpha < VALUE_DRAW
         && pos.has_game_cycle(ss->ply))
     {
-        alpha = value_draw(pos.this_thread());
+        alpha = VALUE_DRAW;
         if (alpha >= beta)
-            return alpha;
+            return value_draw(pos.this_thread());
     }
 
     // Dive into quiescence search when the depth reaches zero
@@ -1410,9 +1410,9 @@ moves_loop: // When in check, search starts here
         && alpha < VALUE_DRAW
         && pos.has_game_cycle(ss->ply))
     {
-        alpha = value_draw(pos.this_thread());
+        alpha = VALUE_DRAW;
         if (alpha >= beta)
-            return alpha;
+            return value_draw(pos.this_thread());
     }
 
     Move pv[MAX_PLY+1];
