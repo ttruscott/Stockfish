@@ -542,6 +542,7 @@ namespace {
 
     assert(-VALUE_INFINITE <= alpha && alpha < beta && beta <= VALUE_INFINITE);
     assert(PvNode || (alpha == beta - 1));
+    assert(!PvNode || ss->pv[0] == MOVE_NONE);
     assert(0 < depth && depth < MAX_PLY);
     assert(!(PvNode && cutNode));
 
@@ -1402,6 +1403,7 @@ moves_loop: // When in check, search starts here
 
     assert(alpha >= -VALUE_INFINITE && alpha < beta && beta <= VALUE_INFINITE);
     assert(PvNode || (alpha == beta - 1));
+    assert(!PvNode || ss->pv[0] == MOVE_NONE);
     assert(depth <= 0);
 
     // Check if we have an upcoming move that draws by repetition, or
@@ -1428,12 +1430,6 @@ moves_loop: // When in check, search starts here
     int moveCount;
 
     // Step 1. Initialize node
-    if (PvNode)
-    {
-        (ss+1)->pv = pv;
-        ss->pv[0] = MOVE_NONE;
-    }
-
     Thread* thisThread = pos.this_thread();
     bestMove = MOVE_NONE;
     ss->inCheck = pos.checkers();
@@ -1593,6 +1589,11 @@ moves_loop: // When in check, search starts here
 
         // Step 7. Make and search the move
         pos.do_move(move, st, givesCheck);
+        if (PvNode)
+        {
+            (ss+1)->pv = pv;
+            (ss+1)->pv[0] = MOVE_NONE;
+        }
         value = -qsearch<nodeType>(pos, ss+1, -beta, -alpha, depth - 1);
         pos.undo_move(move);
 
