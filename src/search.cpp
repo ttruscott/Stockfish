@@ -531,9 +531,9 @@ namespace {
         && alpha < VALUE_DRAW
         && pos.has_game_cycle(ss->ply))
     {
-        alpha = value_draw(pos.this_thread());
+        alpha = VALUE_DRAW;
         if (alpha >= beta)
-            return alpha;
+            return value_draw(pos.this_thread());
     }
 
     // Dive into quiescence search when the depth reaches zero
@@ -1410,9 +1410,9 @@ moves_loop: // When in check, search starts here
         && alpha < VALUE_DRAW
         && pos.has_game_cycle(ss->ply))
     {
-        alpha = value_draw(pos.this_thread());
+        alpha = VALUE_DRAW;
         if (alpha >= beta)
-            return alpha;
+            return value_draw(pos.this_thread());
     }
 
     Move pv[MAX_PLY+1];
@@ -1428,12 +1428,6 @@ moves_loop: // When in check, search starts here
     int moveCount;
 
     // Step 1. Initialize node
-    if (PvNode)
-    {
-        (ss+1)->pv = pv;
-        ss->pv[0] = MOVE_NONE;
-    }
-
     Thread* thisThread = pos.this_thread();
     bestMove = MOVE_NONE;
     ss->inCheck = pos.checkers();
@@ -1593,6 +1587,11 @@ moves_loop: // When in check, search starts here
 
         // Step 7. Make and search the move
         pos.do_move(move, st, givesCheck);
+        if (PvNode)
+        {
+            (ss+1)->pv = pv;
+            (ss+1)->pv[0] = MOVE_NONE;
+        }
         value = -qsearch<nodeType>(pos, ss+1, -beta, -alpha, depth - 1);
         pos.undo_move(move);
 
